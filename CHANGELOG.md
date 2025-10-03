@@ -1,3 +1,6 @@
+## 1.0.3
+- Add more cases for README example and screenshots.
+
 ## 1.0.2
 - Updated README with usage example and screenshots.
 
