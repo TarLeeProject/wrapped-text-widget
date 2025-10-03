@@ -1,3 +1,6 @@
+## 1.0.1
+- Updated README with usage example and screenshots.
+
 ## 1.0.0
 Updated package documents
 
