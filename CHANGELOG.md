@@ -1,3 +1,6 @@
+## 1.0.4
+- Add draggable case in README screenshots.
+
 ## 1.0.3
 - Add more cases for README example and screenshots.
 
