@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class WrappedTextWidget extends StatefulWidget {
-  const WrappedTextWidget({
+  WrappedTextWidget({
     super.key,
     required this.child,
     required this.paragraph,
@@ -12,8 +12,8 @@ class WrappedTextWidget extends StatefulWidget {
     this.top = 0,
     this.isDraggable = false,
     this.padding = EdgeInsets.zero,
-    this.paragraphStyle = const TextStyle(),
-  });
+    TextStyle? paragraphStyle,
+  }) : paragraphStyle = paragraphStyle ?? TextStyle(color: Colors.black);
 
   final Widget child;
   final double left;

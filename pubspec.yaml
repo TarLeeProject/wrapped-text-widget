@@ -1,6 +1,6 @@
 name: wrapped_text_widget
 description: "A widget that allow make a paragraph wrapped a other widget inside"
-version: 0.0.3
+version: 0.0.4
 homepage: "https://github.com/TarLeeProject/wrapped-text-widget.git"
 
 environment:
