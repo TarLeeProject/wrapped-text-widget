@@ -3,8 +3,10 @@
 A Flutter widget that allows you to wrap paragraph text around a widget (e.g., an image or custom UI block).  
 It even supports dragging the widget interactively, with the text reflowing in real time.
 
-| ![Demo screenshot](https://raw.githubusercontent.com/TarLeeProject/wrapped-text-widget/refs/heads/main/example/img.png) | ![Demo screenshot2](https://raw.githubusercontent.com/TarLeeProject/wrapped-text-widget/refs/heads/main/example/img_1.png) |
-|:-----------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------:|
+|                                                          Default                                                          |                                                   With custom left and top                                                   |                                                      isDraggable: true                                                       |
+|:-------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------:|
+|  ![Demo screenshot](https://raw.githubusercontent.com/TarLeeProject/wrapped-text-widget/refs/heads/main/example/img.png)  |  ![Demo screenshot2](https://raw.githubusercontent.com/TarLeeProject/wrapped-text-widget/refs/heads/main/example/img_1.png)  |  ![Demo screenshot2](https://raw.githubusercontent.com/TarLeeProject/wrapped-text-widget/refs/heads/main/example/img_2.gif)  |
+| :-----------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: |
 
 ## Features
 - Wrap text dynamically around any child widget
