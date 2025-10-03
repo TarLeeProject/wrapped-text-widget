@@ -305,6 +305,7 @@ class _MyWidgetState extends State<WrappedTextWidget> {
 
     final tp = TextPainter(
       text: TextSpan(text: currentText, style: style),
+      textDirection: TextDirection.ltr,
       textAlign: textAlign,
     );
 
@@ -341,6 +342,7 @@ class _MyWidgetState extends State<WrappedTextWidget> {
       for (int i = 0; i < segments.length; i++) {
         final tp = TextPainter(
           text: TextSpan(text: currentText, style: style),
+          textDirection: TextDirection.ltr,
           textAlign: textAlign,
         );
 
