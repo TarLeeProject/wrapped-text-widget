@@ -56,7 +56,7 @@ class _MyWidgetState extends State<WrappedTextWidget> {
 
   Timer? _timer;
 
-  late final BoxConstraints _constraint;
+  late BoxConstraints _constraint;
 
   @override
   void initState() {
