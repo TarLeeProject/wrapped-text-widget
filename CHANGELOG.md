@@ -1,3 +1,6 @@
+## 1.1.0-beta.1
+- Handle Hindi / Devanagari text
+
 ## 1.0.4
 - Add draggable case in README screenshots.
 

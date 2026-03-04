@@ -3,28 +3,83 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+/// A widget that allows a paragraph of text to wrap around another widget.
+///
+/// This widget is useful when you want to display text flowing around an
+/// embedded widget such as an image or a decorative element. Common use
+/// cases include blog-style text wrapping or implementing a drop cap effect.
+///
+/// The [WrappedTextWidget] takes a [child] widget that the text will wrap
+/// around, and a [paragraph] which represents the text content.
+///
+/// You can control the position of the [child] using the [left] and [top]
+/// offsets. The child can optionally be made draggable by setting
+/// [isDraggable] to true, and additional spacing around it can be added
+/// via the [padding] parameter.
+///
+/// See also:
+///
+///  * [Text], the basic widget for displaying text.
+///
 class WrappedTextWidget extends StatefulWidget {
+  /// Creates a widget that allows a paragraph of text to wrap around
+  /// another widget.
   WrappedTextWidget({
     super.key,
     required this.child,
     required this.paragraph,
-    this.left = 0,
-    this.top = 0,
+    this.left = 0.0,
+    this.top = 0.0,
     this.isDraggable = false,
     this.padding = EdgeInsets.zero,
     TextStyle? paragraphStyle,
   }) : paragraphStyle = paragraphStyle ?? TextStyle(color: Colors.black);
 
+  /// The widget that the paragraph will wrap around.
+  ///
+  /// This is typically an [Image], [Icon], or any decorative widget.
   final Widget child;
+
+  /// The horizontal offset of the widget from the left edge.
+  ///
+  /// This value represents the x-coordinate of the widget's top-left corner.
+  ///
+  /// Default is `0.0`
   final double left;
+
+  /// The vertical offset of the widget from the top edge.
+  ///
+  /// This value represents the y-coordinate of the widget's top-left corner.
+  ///
+  /// Default is `0.0`
   final double top;
+
+  /// The text content that flows around the widget.
   final String paragraph;
+
+  /// Whether the widget can be dragged by the user.
+  ///
+  /// When set to true, the widget can be repositioned via drag gestures.
+  ///
+  /// Default is `false`
   final bool isDraggable;
+
+  /// The padding applied around the widget.
+  ///
+  /// This creates spacing between the widget and the surrounding text.
+  ///
+  /// Default is `EdgeInsets.zero`
   final EdgeInsets padding;
+
+  /// The text style applied to the paragraph.
+  ///
+  /// This controls the font, color, and other visual properties of the text.
+  ///
+  /// Default value is `TextStyle(color: Colors.black)`
   final TextStyle paragraphStyle;
 
   @override
-  _MyWidgetState createState() => _MyWidgetState();
+  State<WrappedTextWidget> createState() => _MyWidgetState();
 }
 
 class _MyWidgetState extends State<WrappedTextWidget> {
@@ -292,15 +347,12 @@ class _MyWidgetState extends State<WrappedTextWidget> {
   TextStyle style,
   double fullWidth, {
   TextAlign textAlign = TextAlign.justify,
-  bool useCharactersPackage = true,
 }) {
   final paragraph = originalParagraph.replaceAll("\n", "¶\n");
   try {
     final List<List<String>> list = [];
     String currentText = paragraph.trim();
-
     double splittedHeight = 0;
-
     String topPart = '';
 
     final tp = TextPainter(
@@ -308,79 +360,67 @@ class _MyWidgetState extends State<WrappedTextWidget> {
       textDirection: TextDirection.ltr,
       textAlign: textAlign,
     );
-
     tp.layout(minWidth: 0, maxWidth: fullWidth);
 
     final lines = tp.computeLineMetrics();
-
     double y = 0.0;
     const eps = 0.0001;
+
     for (var t = 0; t < lines.length; t++) {
-      final lm = lines[t];
-      if (y + lm.height < top + eps) {
-        y += lm.height;
+      if (y + lines[t].height < top + eps) {
+        y += lines[t].height;
       } else {
         break;
       }
     }
-    if (y == 0) {
-      topPart = '';
-    } else {
+
+    if (y > 0) {
       final pos = tp.getPositionForOffset(Offset(fullWidth, y - eps));
-      int index = pos.offset;
-      topPart = useCharactersPackage
-          ? currentText.characters.take(index).toString()
-          : currentText.substring(0, index);
-
+      topPart = _getSafePart(currentText, pos.offset, tp);
       currentText = currentText.substring(topPart.length).trim();
-
       topPart = topPart.trim();
     }
 
     do {
       final List<String> subList = [];
       for (int i = 0; i < segments.length; i++) {
-        final tp = TextPainter(
+        if (currentText.isEmpty) break;
+
+        final tpSegment = TextPainter(
           text: TextSpan(text: currentText, style: style),
           textDirection: TextDirection.ltr,
           textAlign: textAlign,
         );
+        tpSegment.layout(minWidth: 0, maxWidth: segments[i]);
 
-        tp.layout(minWidth: 0, maxWidth: segments[i]);
+        final sLines = tpSegment.computeLineMetrics();
+        if (sLines.isEmpty) break;
 
-        final lines = tp.computeLineMetrics();
-        if (lines.isEmpty) {
-          list.add(subList);
-          return (topPart, list, currentText);
-        }
-
-        final pos = tp.getPositionForOffset(
-          Offset(segments[i] - 1, lines.first.height - eps),
+        final pos = tpSegment.getPositionForOffset(
+          Offset(segments[i] - 1, sLines.first.height - eps),
         );
-        int index = pos.offset;
 
-        String text = useCharactersPackage
-            ? currentText.characters
-                  .take(min(index, currentText.length))
-                  .toString()
-            : currentText.substring(0, min(index, currentText.length));
+        String textPart = _getSafePart(currentText, pos.offset, tpSegment);
 
-        subList.add(text.trim());
-
-        currentText = currentText.substring(text.length).trim();
-
-        text = text.trim();
+        subList.add(textPart.trim());
+        currentText = currentText.substring(textPart.length).trim();
 
         if (i == segments.length - 1) {
-          splittedHeight += lines.first.height;
+          splittedHeight += sLines.first.height;
         }
       }
-      list.add(subList);
-    } while (splittedHeight < height);
+
+      if (subList.isNotEmpty) {
+        list.add(subList);
+      } else {
+        break;
+      }
+    } while (splittedHeight < height && currentText.isNotEmpty);
+
     return (topPart, list, currentText);
-  } catch (e, st) {
-    debugPrint('There is an exception: $e');
-    debugPrintStack(stackTrace: st);
+  } catch (e, stackTrace) {
+    debugPrint('Exception: $e');
+    debugPrint('Stacktrace: $stackTrace');
     return (
       '',
       [
@@ -390,4 +430,26 @@ class _MyWidgetState extends State<WrappedTextWidget> {
       '',
     );
   }
+}
+
+String _getSafePart(String text, int offset, TextPainter measuredPainter) {
+  if (offset <= 0) return "";
+  if (offset >= text.length) return text;
+
+  final wordRange = measuredPainter.getWordBoundary(
+    TextPosition(offset: offset),
+  );
+  int safeOffset = offset;
+
+  if (offset > wordRange.start && offset < wordRange.end) {
+    safeOffset = wordRange.start;
+  }
+
+  final range = CharacterRange.at(text, 0, safeOffset);
+
+  if (range.current.isEmpty && text.isNotEmpty) {
+    return text.characters.take(1).toString();
+  }
+
+  return range.current;
 }
