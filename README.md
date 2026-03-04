@@ -17,4 +17,4 @@ It even supports dragging the widget interactively, with the text reflowing in r
 Add to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  wrapped_text_widget: ^0.0.1
+  wrapped_text_widget: ^1.0.4
